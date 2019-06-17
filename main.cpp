@@ -6,11 +6,21 @@
 #define RESET 0
 #define AUTOMATIC 1
 #define MANUAL 2
-#define FORWARD 3
-#define CORNER 4
+#define CORNER 3
+#define CORNERMANUAL 4
 #define REVERSE 5
 
 int state = 0;
+
+const int dirPin = 13;
+const int stepPin = 10;
+
+const int dirPin2 = 12;
+const int stepPin2 = 11;
+const int stepsPerRevolution = 200;
+
+const int manualswitch = 9;
+const int reverse = 8;
 
 int distance = 0;
 int difference = 0;
@@ -31,12 +41,27 @@ int detectie = 0;
 int waarschuwing = A3;
 int detectiepin = A2;
 
+int corner = 0;
+int straight = 0;
+
+int ToF1 = 0;
+int ToF2 = 0;
+int FlagDetect = 0;
+int direction = 0;
+
 void initialise (){
     
+    // Declare pins as Outputs
     pinMode(trigPin1, OUTPUT); 
     pinMode(echoPin1, INPUT);
     pinMode(trigPin2, OUTPUT);
-    pinMode(echoPin2, INPUT);                  
+    pinMode(echoPin2, INPUT);     
+    pinMode(stepPin, OUTPUT);
+    pinMode(dirPin, OUTPUT);
+    
+    pinMode(stepPin2, OUTPUT);
+    pinMode(dirPin2, OUTPUT);
+     
 }
 
 int US (){
@@ -135,46 +160,101 @@ void loop() {
   switch (state){
 
       case RESET:
+        digitalWrite(stepPin, LOW);
+   		  digitalWrite(stepPin2, LOW);
+        
+        if (straight <2){
+          if (digitalRead(manualswitch)){
+            state = AUTOMATIC;
+          }
+          else{
+            state = MANUAL;
+          }
+        }
+        else{
+          state = RESET;
+        }
       break;
 
       case AUTOMATIC:
-      break;
 
-      case MANUAL:
-      break;
+        difference = ToF();
+        //Function call bewegen met evt verschil
 
-      case FORWARD:
+        if (IR()){  //Boom gedecteerd
+          digitalWrite(detectiepin, HIGH);
+          delay (2000);
+        }
+
+        distance = US(); //Persoon te dichtbij
+        while (distance < 10){
+          digitalWrite (waarschuwing, HIGH);
+        }
+        digitalWrite (waarschuwing, LOW);
+
+        if (abs(difference)>180){ //Einde pad bereikt
+          state = CORNER;
+          straight++;
+        }
       break;
 
       case CORNER:
+        //functie call met int corner voor links of rechts
+        state = AUTOMATIC;
+        corner++;
+      break;
+
+      case MANUAL:
+
+        difference = ToF();
+        //Function call bewegen met evt verschil
+
+        distance = US(); //Persoon te dichtbij
+        while (distance < 10){
+          digitalWrite (waarschuwing, HIGH);
+        }
+        digitalWrite (waarschuwing, LOW);
+
+        if (abs(difference)>180){ //Einde pad bereikt
+          state = CORNERMANUAL;
+        }
+        else if (reverse){
+          state = REVERSE;
+        }
+      break;
+
+      case CORNERMANUAL:
+        FlagDetect = 0;
+        ToF1 = sensor1.readRangeSingleMillimeters();
+        ToF2 = sensor2.readRangeSingleMillimeters();
+        if (ToF1 < 25){
+          direction = 1;
+          FlagDetect = 1;
+        }
+        else if (ToF2 < 25){
+          direction = 0;
+          FlagDetect = 1;
+        }
+
+        if (FlagDetect){
+          //Function call voor bocht met direction
+          state = MANUAL;
+        }
       break;
 
       case REVERSE:
+        //rij achteruit langzaam
+
+        distance = US(); //Persoon te dichtbij
+        while (distance < 10){
+          digitalWrite (waarschuwing, HIGH);
+        }
+        digitalWrite (waarschuwing, LOW);
+
+        if (!reverse){
+          state = MANUAL;
+        }
       break;
 
   }
-
-
-  digitalWrite(waarschuwing, HIGH);
-  difference = ToF();
-  Serial.print("Verschil ToF: ");
-  Serial.print(difference);
-  Serial.print("\n");
-
-  distance = US();
-  Serial.print("Kortste Ultrasoon: ");
-  Serial.print(distance);
-  Serial.print("\n");
-
-  detectie = IR();
-  if (detectie){
-    digitalWrite(detectiepin, HIGH);
-  }
-  Serial.print("IR: ");
-  Serial.print(detectie);
-  Serial.print("\n");
-
-  delay (500);
-  digitalWrite(detectiepin, LOW);
-  digitalWrite(waarschuwing, LOW);
 }
