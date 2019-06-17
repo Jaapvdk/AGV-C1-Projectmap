@@ -210,7 +210,7 @@ void loop() {
         //Function call bewegen met evt verschil
 
         distance = US(); //Persoon te dichtbij
-        while (distance < 10){
+        while (distance < 5){
           digitalWrite (waarschuwing, HIGH);
         }
         digitalWrite (waarschuwing, LOW);
@@ -246,7 +246,7 @@ void loop() {
         //rij achteruit langzaam
 
         distance = US(); //Persoon te dichtbij
-        while (distance < 10){
+        while (distance < 5){
           digitalWrite (waarschuwing, HIGH);
         }
         digitalWrite (waarschuwing, LOW);
