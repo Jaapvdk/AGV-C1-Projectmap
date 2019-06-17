@@ -3,6 +3,15 @@
 #include <Wire.h>
 #include "Functions.h"
 
+#define RESET 0
+#define AUTOMATIC 1
+#define MANUAL 2
+#define FORWARD 3
+#define CORNER 4
+#define REVERSE 5
+
+int state = 0;
+
 int distance = 0;
 int difference = 0;
 int sensor1_pin = A0;  
@@ -12,6 +21,7 @@ VL6180X sensor2;
 
 const int echoPin1 = 4;
 const int echoPin2 = 5;
+const int trigPin1 = 6;
 const int trigPin2 = 7;
 
 int IR1 = 2;
@@ -121,6 +131,29 @@ void setup() {
 }
 
 void loop() {
+
+  switch (state){
+
+      case RESET:
+      break;
+
+      case AUTOMATIC:
+      break;
+
+      case MANUAL:
+      break;
+
+      case FORWARD:
+      break;
+
+      case CORNER:
+      break;
+
+      case REVERSE:
+      break;
+
+  }
+
 
   digitalWrite(waarschuwing, HIGH);
   difference = ToF();
