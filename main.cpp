@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <VL6180X.h>
 #include <Wire.h>
-#include "Functions.h"
 
 #define RESET 0
 #define AUTOMATIC 1
