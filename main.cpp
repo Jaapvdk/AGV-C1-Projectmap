@@ -1,3 +1,5 @@
+//17-06 AGV C1
+
 #include <Arduino.h>
 #include <VL6180X.h>
 #include <Wire.h>
@@ -184,6 +186,7 @@ void loop() {
           digitalWrite(detectiepin, HIGH);
           delay (2000);
         }
+        digitalWrite(detectiepin, LOW);
 
         distance = US(); //Persoon te dichtbij
         while (distance < 10){
@@ -199,7 +202,7 @@ void loop() {
 
       case CORNER:
         //functie call met int corner voor links of rechts
-        state = AUTOMATIC;
+        state = RESET;
         corner++;
       break;
 
