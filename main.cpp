@@ -59,7 +59,7 @@ void initialise (){
     pinMode(echoPin2, INPUT);     
     pinMode(stepPin, OUTPUT);
     pinMode(dirPin, OUTPUT);
-    
+    pinMode(manualswitch, INPUT_PULLUP);
     pinMode(stepPin2, OUTPUT);
     pinMode(dirPin2, OUTPUT);
      
@@ -161,6 +161,7 @@ void loop() {
   switch (state){
 
       case RESET:
+        Serial.println(state);
         digitalWrite(stepPin, LOW);
    		  digitalWrite(stepPin2, LOW);
         
@@ -178,6 +179,7 @@ void loop() {
       break;
 
       case AUTOMATIC:
+        Serial.println(state);
 
         difference = ToF();
         //Function call bewegen met evt verschil
@@ -201,12 +203,14 @@ void loop() {
       break;
 
       case CORNER:
+        Serial.println(state);
         //functie call met int corner voor links of rechts
         state = RESET;
         corner++;
       break;
 
       case MANUAL:
+        Serial.println(state);
 
         difference = ToF();
         //Function call bewegen met evt verschil
@@ -226,6 +230,7 @@ void loop() {
       break;
 
       case CORNERMANUAL:
+        Serial.println(state);
         FlagDetect = 0;
         ToF1 = sensor1.readRangeSingleMillimeters();
         ToF2 = sensor2.readRangeSingleMillimeters();
@@ -245,6 +250,7 @@ void loop() {
       break;
 
       case REVERSE:
+        Serial.println(state);
         //rij achteruit langzaam
 
         distance = US(); //Persoon te dichtbij
