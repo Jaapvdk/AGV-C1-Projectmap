@@ -233,7 +233,7 @@ void loop() {
         Serial.println(state);
 
         difference = ToF();
-        //Function call bewegen met evt verschil
+        vooruit(difference);
 
         distance = US(); //Persoon te dichtbij
         while (distance < 5){
@@ -264,14 +264,16 @@ void loop() {
         }
 
         if (FlagDetect){
-          //Function call voor bocht met direction
+          draaien(direction);
           state = 2;
         }
       break;
 
       case 5:
         Serial.println(state);
-        //rij achteruit langzaam
+
+        difference = ToF();
+        vooruit(difference);
 
         distance = US(); //Persoon te dichtbij
         while (distance < 5){
