@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <VL6180X.h>
 #include <Wire.h>
+#include "functions.h"
 
 #define RESET 0
 #define AUTOMATIC 1
@@ -94,8 +95,6 @@ int US (){
     {
         distance = distance2;
     }
-    
-
     return (distance);
 }
 
@@ -114,8 +113,11 @@ int ToF (){
 int IR (){
     int detectie = 0;
 
-    if (!(digitalRead (IR1)) || !(digitalRead(IR2))){
+    if ((digitalRead (IR1) == LOW) || (digitalRead(IR2) == LOW)){
       detectie = 1;
+      Serial.println("Detectie");
+      Serial.println(detectie);
+      Serial.print("\n");
     }
     return (detectie);
 }
@@ -137,14 +139,13 @@ void setup() {
   digitalWrite(sensor2_pin, LOW);                         //Beide TOF sensoren moeten uit beginnen       
 
   Wire.begin();          
-
+     
   digitalWrite(sensor1_pin, HIGH);                        //Sensor1 aan, calibreren, hoeft daarna niet meer uit 
   delay(50);
   sensor1.init();
   sensor1.configureDefault();
   sensor1.setTimeout(500);
   sensor1.setAddress(0x54);
-  
 
   digitalWrite(sensor2_pin, HIGH);                        //Sensor1 aan, calibreren, hoeft daarna ook niet meer uit 
   delay(50);                                              //SetAdderss geeft elke sensor een uniek adress op de I2C bus,
@@ -152,8 +153,10 @@ void setup() {
   sensor2.configureDefault();
   sensor2.setTimeout(500);
   sensor2.setAddress(0x56);
-  delay(500);    
-  initialise();            
+  delay(500);
+  
+  Serial.println(state);     
+  initialise();       
 }
 
 void loop() {
@@ -182,8 +185,7 @@ void loop() {
         Serial.println(state);
 
         difference = ToF();
-        //Function call bewegen met evt verschil
-
+        vooruit(difference);
         if (IR()){  //Boom gedecteerd
           digitalWrite(detectiepin, HIGH);
           delay (2000);
@@ -192,6 +194,7 @@ void loop() {
 
         distance = US(); //Persoon te dichtbij
         while (distance < 10){
+          distance = US();
           digitalWrite (waarschuwing, HIGH);
         }
         digitalWrite (waarschuwing, LOW);
@@ -204,7 +207,8 @@ void loop() {
 
       case CORNER:
         Serial.println(state);
-        //functie call met int corner voor links of rechts
+        Serial.print("corner");
+        draaien(corner);
         state = RESET;
         corner++;
       break;
