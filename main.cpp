@@ -51,6 +51,7 @@ int ToF2 = 0;
 int FlagDetect = 0;
 int direction = 0;
 
+int IRFlag = 0;
 void initialise (){
     
     // Declare pins as Outputs
@@ -186,11 +187,15 @@ void loop() {
 
         difference = ToF();
         vooruit(difference);
-        if (IR()){  //Boom gedecteerd
+        if ((IR()) && (IRFlag==0)){  //Boom gedecteerd
           digitalWrite(detectiepin, HIGH);
           delay (2000);
+          IRFlag++;
         }
         digitalWrite(detectiepin, LOW);
+        if (!IR()){
+          IRFlag=0;
+        }
 
         distance = US(); //Persoon te dichtbij
         while (distance < 10){
