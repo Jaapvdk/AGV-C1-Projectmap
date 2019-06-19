@@ -26,10 +26,6 @@ void vooruit (int tofverschil)
 
     if (digitalRead(achteruit) == HIGH)
     {
-        int dist1 = sensor1.readRangeSingleMillimeters(); 
-        delay(20);               
-        int dist2 = sensor2.readRangeSingleMillimeters();
-        tofverschil = dist1 - dist2;
         Serial.println(tofverschil);
         digitalWrite(dirPin2, LOW);
         digitalWrite(dirPin,  HIGH);
@@ -43,27 +39,27 @@ void vooruit (int tofverschil)
         delayMicroseconds(500);
         if (tofverschil < -2)
         {
-	        digitalWrite(stepPin2, HIGH);
+	        digitalWrite(stepPin, HIGH);
 	        delayMicroseconds(5000);
-            digitalWrite(stepPin2, LOW);
+            digitalWrite(stepPin, LOW);
         }
         else if (tofverschil > 2)
         {
-	        digitalWrite(stepPin, HIGH);
-		    delayMicroseconds(5000);
-            digitalWrite(stepPin, LOW);
-        }
-        else if (tofverschil > 40)
-        {
 	        digitalWrite(stepPin2, HIGH);
 		    delayMicroseconds(5000);
             digitalWrite(stepPin2, LOW);
         }
-        else if (tofverschil < -40)
+        else if (tofverschil > 10)
         {
 	        digitalWrite(stepPin, HIGH);
 		    delayMicroseconds(5000);
             digitalWrite(stepPin, LOW);
+        }
+        else if (tofverschil < -10)
+        {
+	        digitalWrite(stepPin2, HIGH);
+		    delayMicroseconds(5000);
+            digitalWrite(stepPin2, LOW);
         }
 		    delayMicroseconds(5000);
         }
@@ -98,11 +94,23 @@ void draaien (int corner)
 	pinMode(stepPin2, OUTPUT);
 	pinMode(dirPin2, OUTPUT);
 
+    digitalWrite(dirPin2, HIGH);
+    digitalWrite(dirPin,  LOW);
+    for (int x = 0; x < 200; x++)
+    {
+        digitalWrite(stepPin, HIGH);
+		digitalWrite(stepPin2, HIGH);
+		delayMicroseconds(5000);
+		digitalWrite(stepPin, LOW);
+   		digitalWrite(stepPin2, LOW);
+		delayMicroseconds(5000);
+    }                                            //Forward
+
     digitalWrite(dirPin, HIGH);                 // Set motor direction clockwise, rechts
 	digitalWrite(dirPin2, HIGH);
     if (corner == 1)
     {
-        digitalWrite(dirPin, LOW);                 // Set motor direction clockwise, rechts
+        digitalWrite(dirPin, LOW);                 
 	    digitalWrite(dirPin2, LOW);
     }
 	for(int x = 0; x < stepsPerturn; x++)           //TURN 1
@@ -114,11 +122,49 @@ void draaien (int corner)
    		digitalWrite(stepPin2, LOW);
 		delayMicroseconds(5000);
 	}
-                                                    //STRAIGHT AHEADTILL NEXT JUNCTION
 
-                                                    //TURN 2
+    digitalWrite(dirPin2, HIGH);
+    digitalWrite(dirPin,  LOW);
+    for (int x = 0; x < 200; x++)
+    {
+        digitalWrite(stepPin, HIGH);
+		digitalWrite(stepPin2, HIGH);
+		delayMicroseconds(5000);
+		digitalWrite(stepPin, LOW);
+   		digitalWrite(stepPin2, LOW);
+		delayMicroseconds(5000);
+    }
+                    
+                                                 //STRAIGHT AHEADTILL NEXT JUNCTION
 
-                                                    //STRAIGHT AHEAD
+    digitalWrite(dirPin, HIGH);                 
+	digitalWrite(dirPin2, HIGH);
+    if (corner == 1)
+    {
+        digitalWrite(dirPin, LOW);                  //TURN 2
+	    digitalWrite(dirPin2, LOW);
+    }
+	for(int x = 0; x < stepsPerturn; x++)           
+	{
+		digitalWrite(stepPin, HIGH);
+		digitalWrite(stepPin2, HIGH);
+		delayMicroseconds(5000);
+		digitalWrite(stepPin, LOW);
+   		digitalWrite(stepPin2, LOW);
+		delayMicroseconds(5000);
+	}                                               
+
+    digitalWrite(dirPin2, HIGH);
+    digitalWrite(dirPin,  LOW);
+    for (int x = 0; x < 200; x++)
+    {
+        digitalWrite(stepPin, HIGH);        //STRAIGHT AHEAD
+		digitalWrite(stepPin2, HIGH);
+		delayMicroseconds(5000);
+		digitalWrite(stepPin, LOW);
+   		digitalWrite(stepPin2, LOW);
+		delayMicroseconds(5000);
+    }                                               
 
 
 }

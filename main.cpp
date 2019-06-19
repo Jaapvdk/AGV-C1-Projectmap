@@ -36,6 +36,9 @@ const int echoPin2 = 5;
 const int trigPin1 = 6;
 const int trigPin2 = 7;
 
+int dist1;
+int dist2;
+
 int IR1 = 2;
 int IR2 = 3;
 int detectie = 0;
@@ -43,7 +46,6 @@ int detectie = 0;
 int waarschuwing = A3;
 int detectiepin = A2;
 
-int corner = 0;
 int straight = 0;
 
 int ToF1 = 0;
@@ -96,6 +98,7 @@ int US (){
     {
         distance = distance2;
     }
+    Serial.println(distance);
     return (distance);
 }
 
@@ -162,9 +165,11 @@ void setup() {
 
 void loop() {
 
+  distance = US();
+  Serial.println(state);
   switch (state){
 
-      case RESET:
+      case 0:
         Serial.println(state);
         digitalWrite(stepPin, LOW);
    		  digitalWrite(stepPin2, LOW);
@@ -182,8 +187,7 @@ void loop() {
         }
       break;
 
-      case AUTOMATIC:
-        Serial.println(state);
+      case 1:
 
         difference = ToF();
         vooruit(difference);
@@ -196,6 +200,11 @@ void loop() {
         if (!IR()){
           IRFlag=0;
         }
+        
+        
+        dist1 = sensor1.readRangeSingleMillimeters(); 
+        delay(20);               
+        dist2 = sensor2.readRangeSingleMillimeters();
 
         distance = US(); //Persoon te dichtbij
         while (distance < 10){
@@ -204,21 +213,23 @@ void loop() {
         }
         digitalWrite (waarschuwing, LOW);
 
-        if (abs(difference)>180){ //Einde pad bereikt
-          state = CORNER;
+        distance = US();
+        if ((dist1 > 50 || dist2 > 50) && (distance<15)){ //Einde pad bereikt
+          state = 3;
           straight++;
         }
       break;
 
-      case CORNER:
+      case 3:
+        int corner;
         Serial.println(state);
-        Serial.print("corner");
+        Serial.println("corner");
         draaien(corner);
-        state = RESET;
+        state = 0;
         corner++;
       break;
 
-      case MANUAL:
+      case 2:
         Serial.println(state);
 
         difference = ToF();
@@ -231,17 +242,17 @@ void loop() {
         digitalWrite (waarschuwing, LOW);
 
         if (abs(difference)>180){ //Einde pad bereikt
-          state = CORNERMANUAL;
+          state = 4;
         }
         else if (reverse){
-          state = REVERSE;
+          state = 5;
         }
       break;
 
-      case CORNERMANUAL:
+      case 4:
         Serial.println(state);
         FlagDetect = 0;
-        ToF1 = sensor1.readRangeSingleMillimeters();
+        ToF1 = sensor1.readRangeSingleMillimeters() - 15;
         ToF2 = sensor2.readRangeSingleMillimeters();
         if (ToF1 < 25){
           direction = 1;
@@ -254,11 +265,11 @@ void loop() {
 
         if (FlagDetect){
           //Function call voor bocht met direction
-          state = MANUAL;
+          state = 2;
         }
       break;
 
-      case REVERSE:
+      case 5:
         Serial.println(state);
         //rij achteruit langzaam
 
@@ -269,7 +280,7 @@ void loop() {
         digitalWrite (waarschuwing, LOW);
 
         if (!reverse){
-          state = MANUAL;
+          state = 2;
         }
       break;
 
