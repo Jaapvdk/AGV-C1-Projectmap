@@ -39,27 +39,39 @@ void vooruit (int tofverschil)
         delayMicroseconds(500);
         if (tofverschil < -2)
         {
+            for (int x=0; x <= 5; x++)
+            {
 	        digitalWrite(stepPin, HIGH);
 	        delayMicroseconds(5000);
             digitalWrite(stepPin, LOW);
+            }
         }
-        else if (tofverschil > 2)
+        else if (tofverschil > 5)
         {
-	        digitalWrite(stepPin2, HIGH);
-		    delayMicroseconds(5000);
-            digitalWrite(stepPin2, LOW);
+	        for (int x=0; x <= 2; x++)
+            {
+	        digitalWrite(stepPin, HIGH);
+	        delayMicroseconds(5000);
+            digitalWrite(stepPin, LOW);
+            }
         }
         else if (tofverschil > 10)
         {
+	        for (int x=0; x <= 10; x++)
+            {
 	        digitalWrite(stepPin, HIGH);
-		    delayMicroseconds(5000);
+	        delayMicroseconds(5000);
             digitalWrite(stepPin, LOW);
+            }
         }
         else if (tofverschil < -10)
         {
-	        digitalWrite(stepPin2, HIGH);
-		    delayMicroseconds(5000);
-            digitalWrite(stepPin2, LOW);
+	        for (int x=0; x <= 10; x++)
+            {
+	        digitalWrite(stepPin, HIGH);
+	        delayMicroseconds(5000);
+            digitalWrite(stepPin, LOW);
+            }
         }
 		    delayMicroseconds(5000);
         }
