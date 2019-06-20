@@ -273,10 +273,7 @@ void loop() {
 
       case 5:
         Serial.println(state);
-
-        difference = ToF();
-        vooruit(difference);
-
+        achteruit();
         distance = US(); //Persoon te dichtbij
         while (distance < 5){
           digitalWrite (waarschuwing, HIGH);

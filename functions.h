@@ -193,8 +193,8 @@ void achteruit ()
 	pinMode(stepPin2, OUTPUT);
 	pinMode(dirPin2, OUTPUT);
     
-    digitalWrite(dirPin2, HIGH);
-    digitalWrite(dirPin,  LOW);
+    digitalWrite(dirPin2, LOW);
+    digitalWrite(dirPin,  HIGH);
 
     for (int x = 0; x < 10; x++)
     {
